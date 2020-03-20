@@ -56,9 +56,21 @@ Ahora ya podemos continuar aprendiendo todos los otros comandos:
 
 - `$  git diff` es para comparar lo que tenemos en memoria ram (Staging) contra lo que tenemos en el disco duro.
 
-####Para volver a un commit anterior del proyecto:
-1. `$  git reset <codigo de commit al que queremos volver> --hard` es para que borre todo lo que esta despues de ese codigo de commit que estamos ingresando (borra incluso lo que tengamos en git add (Staging).
-1.2 `$  git reset <codigo de commit al que queremos volver>` es para que borre todo menos lo que tenemos en git add, asi si queremos podemos ingresar `$  git commit -m "<message>"` y hacemos un commit con lo que teniamos guardado en git add antes de hacer el reset.
+####RESET
+Para volver a un commit anterior del proyecto:
+- `$  git reset --soft` Borramos todo el historial y los registros de Git pero guardamos los cambios que tengamos en Staging, así podemos aplicar las últimas actualizaciones a un nuevo commit.
+Entonces en el **caso** de que tenemos todo bien hasta el commit X pero todos commits que estan despues del commit X estan mal (todos esos commits tienen errores) aun que ya lo note y arregle todo el codigo, ahora para borrar todos los commits que quedaron mal (los commits desde el commit X hasta el ultimo) procedo a:
+1. `$  git add .` Agrego todo el codigo bueno (el que acabe de corregir) a Staging
+2. `$  git reflog` este nos lanza una lista de todos los commits que se han hecho, aqui buscamos el commit X y copiamos su codigo
+3. `$  git reset <codigo del commit X>` con este paso ya borramos todos los commits que habian despues del commit X **SIN** borrar lo que tenemos en Staging (en Staging tenemos agregado el codigo que arreglamos y le hizimos `$  git add .` en el paso 1), este tambien se conoce como `git reset --soft`
+4. `$  git commit -m "<mensaje>"` y listo con esto quedaron borrados todos los commits malos y dejamos unicamente los commits que nos sirven.
+
+- `$  git reset --hard` Borra todo. Todo todito, absolutamente todo. Toda la información de los commits y del área de staging se borra del historial.
+`$  git reset <codigo de commit al que queremos volver> --hard` es para que borre todo lo que esta despues de ese codigo de commit que estamos ingresando (borra incluso lo que tengamos en git add (Staging).
+
+- `$  git reset HEAD` Este es el comando para sacar archivos del área de Staging. No para borrarlos ni nada de eso, solo para que los últimos cambios de estos archivos no se envíen al último commit, a menos que cambiemos de opinión y los incluyamos de nuevo en staging con git add, por supuesto.
+`$  git reset HEAD <archivo>` lo que hace es quitarlo del estado de preparado, es decir cuando hace un "git add index.php" se queda en verde (preparado para el commit), esta comando lo deja en el estado anterior al “git add” es decir, se le esta haciendo el seguimiento esta modificado pero no preparado para el commit…
+A diferencia del `$  git rm <archivo>` que explicamos antes, el git rm remueve el archivo del Staging y ademas lo remueve del seguimiento de Git osea dejamos el archivo como si fuera nuevo o recien lo hubieramos creado para la vista de Git, pero `$  git reset HEAD <archivo>` remueve el archivo del Staging sin quitarle el seguimiento que Git le esta haciendo (lo deja como si existiera desde hace rato pero lo quita de Staging)
 
 ####Para ver un archivo que teniamos en un commit anterior:
 primero verificamos que no tengamos nada para agregar y si tenemos lo guardamos con git add y git commit...
