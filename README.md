@@ -34,6 +34,8 @@ Ahora ya podemos continuar aprendiendo todos los otros comandos:
 
 - `$  git rm --cached <archivo>` ejemplo: `$  git rm --cached historia.txt` es para remover de la lista de pendientes a agregar al respositorio (<abbr title="Espacio en memoria temporal en el que se guarda la informacion pendiente a hacer commit">Staging</abbr>), ya con esto podemos darle a `$  git status` para ver que denuevo esta en rojo y ya habremos quitado el git add que le hicimos a ese archivo antes.
 
+- `$  git rm --force <archivo>` elimina los archivos de Git (respositorio y Staging) y del disco duro. Git siempre guarda todo, por lo que podemos acceder al registro de la existencia de los archivos, de modo que podremos recuperarlos si es necesario (pero debemos usar comandos más avanzados).
+
 - `$  git commit -m "<mensaje>"` es para guardar los cambios de staging en el repositorio local (tu computadora, pero en git se llama repositorio local).
 
 
