@@ -1,7 +1,7 @@
 ## INSTALACION DE MONGODB
 
 # 1
-Primero debes instalar mongodb desde su pag oficial.
+Primero debes instalar mongodb desde su pag oficial https://www.mongodb.com/download-center/community.
 # 2
 Debes crear una carpeta (Nota: no debe de ser en el disco local C ya que ese disco es solo de lectura) por ej: D:\var\lib\mongodb
 # 3
