@@ -6,14 +6,14 @@ import { login } from '../../../utils/auth';
 import { CALL_METRICS, CALL_USER_ACCESS, CALL_PROFESORS } from '../action-types/index.js';
 import { setApiData, saveUserAccess, saveLoginError, saveProfesors, saveUserTokenAndDeleteOldErrors } from '../actions/index.js';
 
-import { config } from '../../../config';
+import { apiKeyToken } from '../../../keysConfig';
 
 
 export function* getUserAccess(action) {
     try {
         const token = Buffer.from(`${action.payload.user}:${action.payload.password}`, 'utf8').toString('base64');
 
-        const response = yield call(axios.post, `http://localhost:3000/api/auth/sign-in`, { apiKeyToken: config.apiKeyToken }, {
+        const response = yield call(axios.post, `http://localhost:3000/api/auth/sign-in`, { apiKeyToken }, {
             headers: {
                 'Authorization': `Basic ${token}`
             }

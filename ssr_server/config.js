@@ -6,8 +6,7 @@ const dev = process.env.NODE_ENV !== 'production' // si el entorno es diferente 
 const config = {
   googleClientId: process.env.GOOGLE_CLIENT_ID || '484011279672-pmjs5ta7itkknu6d51hr11pe6nped8ui.apps.googleusercontent.com', // esta info se saca de: https://console.developers.google.com/
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET || 'hyoK0KVMaFSYpEvjLF3UcDeH',
-  apiUrl: process.env.API_URL || 'http://localhost:3000',
-  apiKeyToken: process.env.API_KEY_TOKEN || 'e92f9a16ae6f5adb6b1c7d55182089b8e05fcd71ae83a9fe3a060cbf1ebac463'
+  apiUrl: process.env.API_URL || 'http://localhost:3000'
 }
 module.exports = {
   serverPort,
