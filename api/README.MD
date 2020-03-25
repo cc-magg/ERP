@@ -29,6 +29,9 @@ Espera a que carge (no demora casi nada).
 
 2) Ahora sin cerrar **_la ventana #1 de CMD_** que creamos en el punto anterior, abre una nueva ventana CMD a la que llamaremos **_la ventana #2 de CMD_** e ingresa el codigo siguiente:
  ``` js
+ > mongo
+```
+ ``` js
  > use admin
 ```
  ``` js
@@ -111,7 +114,7 @@ Successfully authenticated as principal superuser on admin from client 127.0.0.1
 Ya con esto debes de dejar **_la ventana #1 de CMD_** siempre abierta y funcionando con --auth y cada que alguien quiera acceder a mongodb siempre debera ser un usuario existente de lo contrario no le permitira ni ver las bases de datos con el comando "show dbs", si alguien entra en lo que seria **_la ventana #2 de CMD_** y unicamente inicia con el comando **_mongo_** (osea sin credenciales) le permite entrar pero sin poder ver o acceder a nada, pero si entra con el comando **_mongo localhost:27017 -u "superuser" -p "changeMeToAStrongPassword" --authenticationDatabase "admin"_**.
 
 
-// Se creo un nuevo usuario para hacer pruebas:
+// Se crea un nuevo usuario para hacer pruebas que usara la api:
 Creamos al usuario de la db que usara la api en mongodb
 use exampleUsers
 db.createUser(
