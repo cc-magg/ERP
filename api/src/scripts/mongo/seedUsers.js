@@ -31,6 +31,13 @@ const users = [
     password: 'macasu123fuckyouja',
     age: 26,
     email: 'juan@gmail.com'
+  },
+  {
+    name: 'arturo',
+    password: '1',
+    isAdmin: true,
+    age: 25,
+    email: 'c@gmail.com'
   }
 ]
 

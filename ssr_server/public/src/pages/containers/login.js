@@ -64,7 +64,7 @@ class Login extends Component {
         if (props.token != state.token) {
             //if there is a new token in the store its validated, if valid then isLogued: true
             //if not then the store token is removed
-            //console.log('getDerivedStateFromProps nuevo token '+props.token);
+            console.log('getDerivedStateFromProps nuevo token '+props.token);
             if (props.token.length > 0) {
                 if ('a' == 'a') {
                     //if the token is valid

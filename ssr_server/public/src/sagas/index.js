@@ -11,26 +11,21 @@ import { config } from '../../../config';
 
 export function* getUserAccess(action) {
     try {
-        console.log('antes del call '+config.apiKeyToken);
-        //const response = yield call(axios.get, `http://localhost:8080/login/${action.payload.user}/${action.payload.password}`);
-        const response = yield call(axios.post, `http://localhost:3000/api`, { apiKeyToken: config.apiKeyToken });
+        const token = Buffer.from(`${action.payload.user}:${action.payload.password}`, 'utf8').toString('base64');
 
-        /*const apiCall = () => {
-            return axios.post('http://localhost:3000/api/auth/sign-in', { apiKeyToken: config.apiKeyToken }, {
-                auth: {
-                    email: action.payload.email,
-                    password: action.payload.password
-                }
-            }).then(response => response.data)
-                .catch(err => {
-                    throw err;
-                });
-        }*/
+        const response = yield call(axios.post, `http://localhost:3000/api/auth/sign-in`, { apiKeyToken: config.apiKeyToken }, {
+            headers: {
+                'Authorization': `Basic ${token}`
+            }
+        });
+        //const response = yield call(axios.get, `http://localhost:8080/login/${action.payload.user}/${action.payload.password}`);
+
+
         //if(response.data) login(response.data.newUserToken);
         //yield put(saveUserAccess(map(response.data)));
-        console.log('resultado', response.data);
+        //console.log('resultado', response.data);
 
-        yield put((response.data.error) ? saveLoginError(response.data.error) : saveUserTokenAndDeleteOldErrors(response.data.newUserToken));
+        yield put((response.data.error) ? saveLoginError(response.data.error) : saveUserTokenAndDeleteOldErrors(response.data.token));
     } catch (error) {
         console.log('Request failed¡¡ error: ' + error);
     }

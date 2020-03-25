@@ -5,6 +5,7 @@ const http = require('http')
 const routes = require('./routes')
 const auth = require('./auth')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 
 const chalk = require('chalk')
 // const debug = require('debug')('API-server')
@@ -20,10 +21,30 @@ const notFoundHandler = require('./src/utils/middleware/notFoundHandler')
 
 const app = express()
 
+
+const whitelist = ['http://localhost:8000']
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      return callback(null, true)
+    } else {
+      return callback(boom.unauthorized('unauthorized origin'), false)
+    }
+  }
+}
+app.use(cors(corsOptions))
 // Here we are configuring express to use body-parser as middle-ware. (para que las respuestas las mande en json y no en html)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 // settings
+/*app.use(function(req, res, next) {
+  var origin = req.get('origin');
+  console.log('origin= '+origin)
+  res.header("Access-Control-Allow-Origin", "http://localhost:8000"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});*/
+
 app.use('/api/auth', auth)
 app.use('/api', routes)
 // body parser

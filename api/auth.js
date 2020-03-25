@@ -44,7 +44,6 @@ routes.post('/sign-in', async (req, res, next) => {
    */
   passport.authenticate('basic', function (error, user) {
     try {
-      console.log('aaaa'+error+' '+user+JSON.stringify(user))
       if (error || !user) { // si nos devuelve un error o si el usuario no es encontrado
         return next(boom.unauthorized('unauthorized1'))
       }
