@@ -10,8 +10,39 @@ const userServices = require('./src/utils/services/users')
 const validationHandler = require('./src/utils/middleware/validationHandler')
 const { exampleUserSchema } = require('./src/joiSchemas/users')
 
+const { sign } = require('./src/utils/auth/jwtUtilities/jwt')
+
 // Basic strategy
 require('./src/utils/auth/strategies/basic')
+
+routes.post('/token', async (req, res, next) => {
+  const { apiKeyToken, sessionId } = req.body
+  if (!apiKeyToken || !sessionId) {
+    return next(boom.unauthorized('apiKeyToken and sessionId are required')) 
+  }
+
+  const apiKey = await apiKeyServices.getApiKey(apiKeyToken)
+  if (!apiKey) {
+    return next(boom.unauthorized())
+  }
+
+  const user = await userServices.getUserById(sessionId)
+  if (!user) {
+    return next(boom.unauthorized())
+  }
+
+  const { _id, name, email } = user
+
+  const payload = {
+    sub: _id,
+    name,
+    email,
+    scopes: apiKey.scopes
+  }
+  const token = sign(payload)
+
+  return res.status(200).json({ token })
+})
 
 routes.post('/sign-in', async (req, res, next) => {
   const { apiKeyToken } = req.body
@@ -45,7 +76,7 @@ routes.post('/sign-in', async (req, res, next) => {
   passport.authenticate('basic', function (error, user) {
     try {
       if (error || !user) { // si nos devuelve un error o si el usuario no es encontrado
-        return next(boom.unauthorized('unauthorized1'))
+        return next(boom.unauthorized())
       }
 
       req.login(user, { session: false }, async function (error) {
@@ -58,7 +89,7 @@ routes.post('/sign-in', async (req, res, next) => {
          */
         const apiKey = await apiKeyServices.getApiKey(apiKeyToken)
         if (!apiKey) {
-          return next(boom.unauthorized('unauthorized2'))
+          return next(boom.unauthorized())
         }
 
         const { _id, name, email } = user
@@ -69,11 +100,12 @@ routes.post('/sign-in', async (req, res, next) => {
           email,
           scopes: apiKey.scopes
         }
-        const token = jwt.sign(payload, defaultConfig.authJwtSecret, {
+        const token = sign(payload)
+        /*const token = jwt.sign(payload, defaultConfig.authJwtSecret, {
           expiresIn: '15m'
-        })
+        })*/
 
-        return res.status(200).json({ token, user: { _id, name, email } })
+        return res.status(200).json({ sessionId: _id, token, user: { name, email } })
       })
     } catch (err) {
       return next(err)
@@ -85,7 +117,7 @@ routes.post('/sign-up', validationHandler(exampleUserSchema), async (req, res, n
   const user = req.body
 
   try {
-    const alreadyExist = await userServices.getUser(user.email)
+    const alreadyExist = await userServices.getUser({ email: user.email })
     if (alreadyExist) {
       return res.status(200).json({
         data: alreadyExist.email,

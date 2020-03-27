@@ -13,8 +13,9 @@ passport.use(
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() // le decimos que el jwt lo saque del header de cada peticion
   },
   async function (tokenPayload, callback) {
+    console.log('error3 = '+tokenPayload)
     try {
-      const user = await userService.getUser(tokenPayload.email)
+      const user = await userService.getUser({ email: tokenPayload.email })
       if (!user) {
         return callback(boom.unauthorized(), false)
       }

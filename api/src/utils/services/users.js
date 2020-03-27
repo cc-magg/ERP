@@ -16,8 +16,13 @@ class UsersService {
     return resultado
   }
 
-  async getUser (email) {
-    const resultado = await this.MongoLib.get(this.collection, this.modelName, usercustomSchema, { email })
+  async getUser (query) {
+    const resultado = await this.MongoLib.get(this.collection, this.modelName, usercustomSchema, query)
+    return resultado
+  }
+
+  async getUserById (id) {
+    const resultado = await this.MongoLib.getById(this.collection, this.modelName, usercustomSchema, id)
     return resultado
   }
 

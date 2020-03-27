@@ -10,7 +10,7 @@ const userService = require('../../services/users')
 passport.use(new BasicStrategy(async function (email, password, callback) {
   console.log('desde middleware '+email)
   try {
-    const user = await userService.getUser(email)
+    const user = await userService.getUser({ email })
 
     if (!user) {
       return callback(boom.unauthorized('unauthorized3'), false)

@@ -16,7 +16,10 @@ routes.get('/', (req, res, next) => {
 
 routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
   // throw new Error(`error custom`)
-  return res.send('aqui esta la vista privada!')
+  return res.status(200).json({
+    data: 'ok',
+    message: 'ok'
+  })
 })
 
 routes.get('/getallusers', async (req, res, next) => {

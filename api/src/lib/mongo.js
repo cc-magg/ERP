@@ -52,6 +52,18 @@ class Database {
     return queryResoult
   }
 
+  async getById (collection, modelName, mongoDbSchema, id, db) {
+    db = db || await this._connect() // si no recibe la conexion como parametro, procedemos a crearla
+    const MyModel = db.model(modelName, mongoDbSchema, collection)
+    const queryResoult = MyModel.findById(id, function (err, document) {
+      if (err) return err
+
+      return document
+    })
+    //console.log('desde la libreria de mongo: '+JSON.stringify(queryResoult))
+    return queryResoult
+  }
+
   /**
    * @param {*} collection es un parametro obligatorio
    * @param {*} modelName es un parametro obligatorio
