@@ -6,6 +6,7 @@ import { Map as map } from 'immutable';
 import { bindActionCreators } from "redux";
 import * as actions from '../public/src/actions/index';
 import { auth } from '../utils/auth';
+import axios from 'axios';
 
 //import components
 import MainPage from '../public/src/pages/containers/main';
@@ -20,6 +21,10 @@ class Main extends Component {
     static async getInitialProps(ctx) {
         // Check user's session
         const token = auth(ctx);
+        //si no hay una cookie que contenga un token entonces el usuario no ha iniciado sesion o la cookie ya expiro
+        //por lo que le pedimos que inicie sesion
+        if (token == '') Router.push('/login');
+        //return for component as a prop
         return { token };
     }
     state = {
@@ -31,7 +36,7 @@ class Main extends Component {
             this.props.actions.saveUserAccess(map(JSON.parse(access)));
         }*/
         //for the screen width detection so that on mobile the side bar menu is false on first load
-        this.setState({screenWidth: window.innerWidth});
+        this.setState({ screenWidth: window.innerWidth });
         //here we use the localstorage eventlistener so that every tab from the browser listen when the logout is being called and then
         //it redirects to login all tabs from the browser (this event is called after the cookie.remove() so the login will show the form for every tab)
         //Add event listener when a restricted Page Component mounts
@@ -63,7 +68,7 @@ class Main extends Component {
         window.localStorage.removeItem('logout');
     }
     render() {
-        return (<MainPage screenWidth={this.state.screenWidth} didFirstLoad={true}/>)
+        return (<MainPage screenWidth={this.state.screenWidth} didFirstLoad={true} />)
     }
 }
 function mapStateToProps(state, props) {
