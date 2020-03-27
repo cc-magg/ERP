@@ -17,6 +17,7 @@ import MenuComponent from '../components/menu';
 
 //temporal modules test info
 import { modules, user, user_info } from '../../test_info';
+import { auth } from '../../../../utils/auth';
 
 class MainContainer extends Component {
     state = {

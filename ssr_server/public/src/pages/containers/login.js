@@ -13,14 +13,17 @@ import HandleErrorContainer from '../../components/error/container/handle-error.
 import LoginComponent from '../components/loginComponent';
 import Layout from '../components/loginLayout';
 
-/**lo mas seguro es que el usuario no tenga un token, en este caso solo es mostrar el formulario, pero,
- * en caso de que si tenga un token, se debe revisar y si ya no es valido entonces se muestra el formulario
- * si es valido entonces se muestra la vista de que ya esta logueado que si desea hacer logout
- */
+ /**
+  * si es el primer login entonces desde el formulario se guarda en redux el nuevo token y tambien isTokenValid = true
+  * al detectar un cambio en la prop.isTokenValid pues igualamos isLogued
+  * al detectar un cambio en la prop.token pues guardamos el nuevos token
+  * al actualizarce el componente, validamos si isLogued=true
+  * en caso de ser true pues redireccionamos a /main
+  * 
+  * si ya tenia un token y va al login entonces redireccionamos a /main para validar el token desde auth.js
+  */
 
 class Login extends Component {
-    //the form call an action wich ask the token and then saves it in the redux store as 'access'
-    //and mapStateToProps renames it as 'token'
     state = {
         isLogued: false,
         token: map(),
@@ -33,23 +36,20 @@ class Login extends Component {
     }
     componentDidUpdate() {
         //console.log('entro en componentDidUpdate ');
-        //if the comoponent update because now the user is logued (from getDerivedStateFromProps validations)
-        //then here we create the cookie and redirect to /main
         if (this.state.isLogued) {
+            console.log('isLogued = true');
             login(this.props.token, '/main');
-        } else {
-            this.props.actions.saveUserAccess('');
         }
         //console.log('salio de componentDidUpdate');
     }
     async componentDidMount() {
         //console.log('entro en componentDidMount ');
-        //on page load check, if there was already a cookie token then it's saved in the store so that
-        //getDerivedStateFromProps can validate it
         if (!this.state.isLogued) {
             const token2 = await Cookies.get('token');
             if (token2) {
-                this.props.actions.saveUserAccess(token2);
+                //if there is a token already then we redirect to /main and the auth.js will validate the token before the user can see the main view
+                Router.push('/main');
+                //this.props.actions.callUserTokenValidation(token2);
             }
         }
     }
@@ -61,30 +61,14 @@ class Login extends Component {
             //en caso de que halla un cambio en el estado del spinner pues actualizamos su state
             newState.showSpinner = props.showSpinner;
         }
-        if (props.token != state.token) {
-            //if there is a new token in the store its validated, if valid then isLogued: true
-            //if not then the store token is removed
-            console.log('getDerivedStateFromProps nuevo token '+props.token);
-            if (props.token.length > 0) {
-                if ('a' == 'a') {
-                    //if the token is valid
-                    console.log('isLogued = true');
-                    newState.token = props.token;
-                    newState.isLogued = true;
-                } else {
-                    //if the token is not valid
-                    console.log('isLogued = false');
-                    newState.isLogued = false;
-                }
-            } else {
-                console.log('isLogued = false');
-                //if the token is empty
-                newState.isLogued = false;
-            }
+        if (props.isTokenValid != state.isLogued) {
+            newState.isLogued = props.isTokenValid;
+        }
+        if (props.token != state.token && props.token.length > 0) {
+            newState.token = props.token;
         }
         if (props.error != state.error) {
             //console.log('getDerivedStateFromProps nuevo error '+props.error);
-            //login returned error insted of token
             newState.isLogued = false;
         }
         return Object.keys(newState).length ? newState : null;
@@ -111,6 +95,7 @@ function mapStateToProps(state, props) {
     result.showSpinner = state.get('spinner').get('showSpinner');
     result.error = state.get('user').get('error');
     result.token = state.get('user').get('access');
+    result.isTokenValid = state.get('user').get('isTokenValid');
 
     return result;
 }
