@@ -21,6 +21,8 @@ const protectRoutes = function (req, res, next) {
 
     req.login(data.user, { session : false }, (err) => {
       if (err) return next(err)
+
+      req.user = data.user // guardamos al usuario en req.user para poder usar su informacion en las rutas o otros middleware
       return next()
     })
   })(req, res, next)

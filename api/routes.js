@@ -8,6 +8,8 @@ const passport = require('passport')
 // routes protection
 const protectRoutes = require('./src/utils/auth/customCallbacks/jwtHandler')
 const scopesValidationHandler = require('./src/utils/middleware/scopesValidationHandler')
+// jwt utilities
+const { verify } = require('./src/utils/auth/jwtUtilities/jwt')
 
 routes.get('/', (req, res, next) => {
   // throw new Error(`error custom`)
@@ -19,6 +21,23 @@ routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth
   return res.status(200).json({
     data: 'ok',
     message: 'ok'
+  })
+})
+
+routes.get('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
+  if (!req.user) {
+    return next(boom.unauthorized()) 
+  }
+
+  const { name, email } = req.user
+  const user = {
+    name,
+    email
+  }
+
+  return res.status(200).json({
+    data: user,
+    message: 'user information'
   })
 })
 

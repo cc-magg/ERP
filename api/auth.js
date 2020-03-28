@@ -15,7 +15,7 @@ const { sign } = require('./src/utils/auth/jwtUtilities/jwt')
 // Basic strategy
 require('./src/utils/auth/strategies/basic')
 
-routes.post('/token', async (req, res, next) => {
+routes.post('/getnewtoken', async (req, res, next) => {
   const { apiKeyToken, sessionId } = req.body
   if (!apiKeyToken || !sessionId) {
     return next(boom.unauthorized('apiKeyToken and sessionId are required')) 

@@ -8,5 +8,8 @@ module.exports = {
     return jwt.sign(payload, defaultConfig.authJwtSecret, {
       expiresIn: '15m'
     })
+  },
+  verify: function (token) {
+    return jwt.verify(token, defaultConfig.authJwtSecret, callback)
   }
 }
