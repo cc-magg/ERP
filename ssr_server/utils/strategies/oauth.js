@@ -6,7 +6,7 @@ const boom = require("@hapi/boom")
 const { OAuth2Strategy } = require("passport-oauth")
 const chalk = require('chalk')
 
-const { config } = require("../../../config")
+const { config } = require("../../config")
 
 const GOOGLE_AUTHORIZATION_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 const GOOGLE_TOKEN_URL = "https://www.googleapis.com/oauth2/v4/token"

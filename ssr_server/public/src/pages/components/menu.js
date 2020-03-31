@@ -19,7 +19,6 @@ class MenuComponent extends Component {
                     return <div key={posicion} onClick={() => this.handleChange(item2.title.toLowerCase())} className={"text-center item "+extraCss}>{item2.title}</div>
                 });
             })}
-            <Link href="/login"><div className={"text-center item"}>Login</div></Link>
             <style jsx>{sidebar}</style>
             <style jsx global>{`
             .logo img {

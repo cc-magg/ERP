@@ -31,9 +31,11 @@ function wrapErrors (err, req, res, next) {
 function errorHandler (err, req, res, next) {
   console.log('ERROR! '+err)
   if (!err.statusCode) {
-    if (err.message.match(/unauthorized/)) {
+    if (err.message.match(/^(unauthorized|Unauthorized)$/)) {
+      console.log('error 401')
       return res.status(401).json(withErrorStack(err.message, err.stack))
     } else {
+      console.log('error 500')
       return res.status(500).json(withErrorStack(err.message, err.stack))
     }
   } else {

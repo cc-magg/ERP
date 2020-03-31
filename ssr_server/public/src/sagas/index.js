@@ -6,50 +6,39 @@ import { login } from '../../../utils/auth';
 import {
     CALL_METRICS,
     CALL_USER_ACCESS,
-    CALL_PROFESORS,
-    CALL_USER_TOKEN_VALIDATION
+    CALL_PROFESORS
 } from '../action-types/index.js';
 import {
     setApiData,
     saveUserAccess,
     saveLoginError,
     saveProfesors,
-    saveUserTokenAndDeleteOldErrors,
-    saveTokenAuthResult
+    saveUserTokenAndDeleteOldErrors
 } from '../actions/index.js';
 
 import { apiKeyToken } from '../../../keysConfig';
 
 
 export function* getUserAccess(action) {
+    const token = Buffer.from(`${action.payload.user}:${action.payload.password}`, 'utf8').toString('base64');
     try {
-        const token = Buffer.from(`${action.payload.user}:${action.payload.password}`, 'utf8').toString('base64');
-        const response = yield call(axios.post, `http://localhost:3000/api/auth/sign-in`, { apiKeyToken }, {
+        /*const response = yield call(axios.post, `http://localhost:3000/api/auth/sign-in`, { apiKeyToken }, {
             headers: {
                 'Authorization': `Basic ${token}`
             }
-        });
-        //const response = yield call(axios.get, `http://localhost:8080/login/${action.payload.user}/${action.payload.password}`);
-
-
-        //if(response.data) login(response.data.newUserToken);
-        //yield put(saveUserAccess(map(response.data)));
-        //console.log('resultado', response.data);
-
-        yield put(saveUserTokenAndDeleteOldErrors(response.data.token));
+        });*/
+        const response = yield call(axios.post, `/validateUser`, { token });
+        if (response.data.name && response.data.name === 'Error') {
+            //console.log('SALIO SINEDO UN ERROR');
+            throw new Error('' + response.data.message);
+        } else {
+            //console.log('guardo el nuevo token: '+JSON.stringify(response));
+            yield put(saveUserTokenAndDeleteOldErrors(response.data.token));
+        }
         //yield put((response.data.error) ? saveLoginError(response.data.error) : saveUserTokenAndDeleteOldErrors(response.data.token));
     } catch (error) {
         console.log('Request failed¡¡ error: ' + error.message);
         yield put(saveLoginError(error.message));
-    }
-}
-export function* validateToken(action) {
-    try {
-        const response = yield call(axios.get, `http://localhost:3000/vistaprivada`, { headers: { 'Authorization': `Bearer ${action.payload.userToken}` } });
-        //the validations is made in the reducer user.js
-        yield put(saveTokenAuthResult(response.data));
-    } catch (error) {
-        console.log('Request failed¡¡ error: ' + error);
     }
 }
 export function* getProfesors(action) {
@@ -65,7 +54,6 @@ export function* getProfesors(action) {
 export function* actionsWatcher() {
     yield all([
         takeEvery(CALL_USER_ACCESS, getUserAccess),
-        takeEvery(CALL_USER_TOKEN_VALIDATION, validateToken),
         takeEvery(CALL_PROFESORS, getProfesors)
     ])
 }

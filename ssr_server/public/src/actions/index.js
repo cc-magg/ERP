@@ -11,9 +11,7 @@ import {
     SHOW_SPINNER_STATUS,
     CALL_PROFESORS,
     SAVE_PROFESORS,
-    SAVE_NEW_USER_ACCESS,
-    SAVE_TOKEN_VALIDATION,
-    CALL_USER_TOKEN_VALIDATION
+    SAVE_NEW_USER_ACCESS
 } from '../action-types/index.js';
 
 //import { List as list } from 'immutable';
@@ -62,24 +60,6 @@ export function saveUserTokenAndDeleteOldErrors(userAccess) {
         type: SAVE_NEW_USER_ACCESS,
         payload: {
             userAccess
-        }
-    }
-}
-
-export function saveTokenAuthResult(isTokenValid) {
-    return {
-        type: SAVE_TOKEN_VALIDATION,
-        payload: {
-            isTokenValid
-        }
-    }
-}
-
-export function callUserTokenValidation(userToken) {
-    return {
-        type: CALL_USER_TOKEN_VALIDATION,
-        payload: {
-            userToken
         }
     }
 }
