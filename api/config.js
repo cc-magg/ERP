@@ -1,5 +1,7 @@
 'use strict'
 
+const debug = require('debug')('ERP:api:config')
+
 // settings MongoDB
 const mongodb = {
   user: process.env.PORT || 'example',
@@ -29,9 +31,21 @@ const defaultConfig = {
   adminApiKeyYoken: process.env.ADMIN_API_KEY_YOKEN
 }
 
+// postgresql sequelize configuration
+const configDb = {
+  database: process.env.DB_NAME || 'ERP',
+  username: process.env.USER || 'ERPAdmin',
+  password: process.env.PASSWORD || 'ERPPassword',
+  host: process.env.DB_HOST || 'localhost',
+  dialect: 'postgres', // este puede cambiar a oracle o mysql y asi
+  logging: session => debug(session), // Esto es para imprimir en consola con console.log cuando haga loggin alguien, es parte de la libreria debug
+  operatorsAliases: 0 // Este codigo es para mejorar la seguridad de sequelize
+}
+
 module.exports = {
   mongodb,
   serverPort,
   dev,
-  defaultConfig
+  defaultConfig,
+  configDb
 }

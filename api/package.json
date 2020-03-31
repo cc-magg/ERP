@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
+    "dev-debug": "set DEBUG=ERP:* & nodemon server.js",
     "lint": "standard",
     "start": "cross-env NODE_ENV=production node server.js",
     "seed-users": "set DEBUG=* & node ./src/scripts/mongo/seedUsers.js",
@@ -28,10 +29,12 @@
     "mongoose": "^5.9.2",
     "passport": "^0.4.1",
     "passport-http": "^0.3.0",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.0",
+    "ERP-db": "file:../db"
   },
   "devDependencies": {
     "nodemon": "^2.0.2",
-    "standard": "^14.3.1"
+    "standard": "^14.3.1",
+    "debug": "^4.1.1"
   }
 }

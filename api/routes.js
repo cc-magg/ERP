@@ -4,12 +4,17 @@ const routes = require('express').Router()
 const validationHandler = require('./src/utils/middleware/validationHandler')
 const { exampleUserSchema } = require('./src/joiSchemas/users')
 const userservices = require('./src/utils/services/users')
-const passport = require('passport')
+const chalk = require('chalk')
+const debug = require('debug')('ERP:api:routes')
+const { configDb } = require('./config')
+
 // routes protection
 const protectRoutes = require('./src/utils/auth/customCallbacks/jwtHandler')
 const scopesValidationHandler = require('./src/utils/middleware/scopesValidationHandler')
-// jwt utilities
-const { verify } = require('./src/utils/auth/jwtUtilities/jwt')
+
+//sequelize db configuration
+const setupSequelizeDB = require('ERP-db')
+let services, productServices // Services of db postgresql sequelize
 
 routes.get('/', (req, res, next) => {
   // throw new Error(`error custom`)
@@ -24,21 +29,40 @@ routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth
   })
 })
 
-routes.get('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
-  if (!req.user) {
-    return next(boom.unauthorized()) 
+routes.post('/getallproducts', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  if (!services) {
+    try {
+      debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+      services = await setupSequelizeDB(configDb).catch(handleFatalError)
+      productServices = services.Product.productServices
+    } catch (err) {
+      return next(err)
+    }
   }
 
-  const { name, email } = req.user
-  const user = {
-    name,
-    email
-  }
+  const { orderedBy } = req.body
+  try {
+    if (!orderedBy) { // si no lo quiere ordenado
+      debug(`${chalk.green('Starting the request to db of products')}`)
+      const resoult = await productServices.findAllProducts() // si retorna un error va a caer en el catch
+      return res.status(200).json({
+        data: resoult,
+        message: 'products list'
+      })
+    }
 
-  return res.status(200).json({
-    data: user,
-    message: 'user information'
-  })
+    debug(`${chalk.green('Starting the request to db of products ordered by: ')} ${orderedBy}`)
+    const arrayOrderedBy = []
+    arrayOrderedBy.push(orderedBy.split(',')) // arrayOrderedBy = [["Name","DESC"]]
+    console.log(arrayOrderedBy)
+    const resoult = await productServices.findAllProducts(arrayOrderedBy) // si retorna un error va a caer en el catch
+    return res.status(200).json({
+      data: resoult,
+      message: 'products list'
+    })
+  } catch (err) {
+    return next(err)
+  }
 })
 
 routes.get('/getallusers', async (req, res, next) => {
@@ -72,11 +96,11 @@ routes.delete('/deleteallusers', validationHandler(exampleUserSchema, 'query'), 
 })
 
 /* process.on('uncaughtException', handleFatalError)
-process.on('unhandledRejection', handleFatalError)
+process.on('unhandledRejection', handleFatalError) */
 function handleFatalError (err) {
-  console.error(`${chalk.red('[fatal error]-api: ')} ${err.message}`)
+  console.error(`${chalk.red('[fatal error]-api-routes: ')} ${err.message}`)
   console.error(err.message)
   process.exit(1)
-} */
+}
 
 module.exports = routes
