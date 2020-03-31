@@ -18,23 +18,10 @@ import {
 } from '../localStorageOptions';
 
 class Main extends Component {
-    static async getInitialProps(ctx) {
-        // Check user's session
-        const token = auth(ctx);
-        //si no hay una cookie que contenga un token entonces el usuario no ha iniciado sesion o la cookie ya expiro
-        //por lo que le pedimos que inicie sesion
-        if (token == '') Router.push('/login');
-        //return for component as a prop
-        return { token };
-    }
     state = {
         screenWidth: 0
     }
     componentDidMount() {
-        /*if(LocalStorageCheckForThis('access') && this.props.result.size == 0) {
-            let access = LocalStorageGetData('access');
-            this.props.actions.saveUserAccess(map(JSON.parse(access)));
-        }*/
         //for the screen width detection so that on mobile the side bar menu is false on first load
         this.setState({ screenWidth: window.innerWidth });
         //here we use the localstorage eventlistener so that every tab from the browser listen when the logout is being called and then
@@ -42,7 +29,6 @@ class Main extends Component {
         //Add event listener when a restricted Page Component mounts
         window.addEventListener('storage', event => {
             if (event.key === 'logout') {
-                this.props.actions.saveUserAccess('');
                 Router.push('/login');
             }
         });
@@ -61,7 +47,6 @@ class Main extends Component {
         //the second parameter must be the same as the window.addEventListener second parameter for it to work
         window.removeEventListener('storage', event => {
             if (event.key === 'logout') {
-                this.props.actions.saveUserAccess('');
                 Router.push('/login');
             }
         });
@@ -69,16 +54,6 @@ class Main extends Component {
     }
     render() {
         return (<MainPage screenWidth={this.state.screenWidth} didFirstLoad={true} />)
-    }
-}
-function mapStateToProps(state, props) {
-    /*let result = map();
-    let access = state.get('user').get('access');
-    if(access != ''){
-        result = access;
-    }*/
-    return {
-
     }
 }
 function mapDispatchToProps(dispatch) {

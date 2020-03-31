@@ -4,6 +4,7 @@ import { List as list, Map as map } from 'immutable';
 import { bindActionCreators } from 'redux';
 import * as actions from '../../actions/index.js';
 import Link from 'next/link';
+import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import { Grid, Row, Col } from 'react-bootstrap';
 import { PulseLoader } from 'react-spinners';
@@ -35,10 +36,14 @@ class MainContainer extends Component {
         event.preventDefault();
         console.log('valor a buscar: ' + this.input.value)
     }
-    logoutEvent = event => {
-        this.props.actions.saveUserAccess('');
-        logout();
-        //this.props.actions.removeUserAccess();
+    logoutEvent = async event => {
+        console.log('PRESIONO LOGOUT DESDE LOGIN');
+        //logout() validates the user and if there is user then proceeds to logout
+        let logoutResult = await logout('/main');
+        if (logoutResult.data == 'deleted') {
+            //logout() is calling a auth method that calls a windows eventlistener that was created in the /pages/main.js wich redirects to /login
+            //console.log('desde el cliente el resultado del logout fue: ' + logoutResult.data);
+        } else console.log('Error while loging out ' + logoutResult.data);
     }
     setRef = item => {
         this.input = item

@@ -24,7 +24,7 @@ routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth
   })
 })
 
-routes.get('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
+routes.post('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
   if (!req.user) {
     return next(boom.unauthorized()) 
   }
