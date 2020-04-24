@@ -23,21 +23,27 @@ import { auth } from '../../../../utils/auth';
 class MainContainer extends Component {
     state = {
         showSidebar: true,
-        contentState: 'home',
-        didFirstLoad: false
+        contentState: 'inicio',
+        didFirstLoad: false,
+        moduleSubTitle: '',
+        location: 'default'
     }
     openCloseSidebar = () => {
         this.setState({ showSidebar: !this.state.showSidebar });
     }
     changeContent = content => {
-        this.setState({ contentState: content });
+        const subtitle = (content == 'inventario')? ' - SUCURSAL '+this.state.location.toUpperCase() : '';
+        this.setState({ 
+            contentState: content,
+            moduleSubTitle: subtitle
+        });
     }
     handleSubmitSearch = event => {
         event.preventDefault();
         console.log('valor a buscar: ' + this.input.value)
     }
     logoutEvent = async event => {
-        console.log('PRESIONO LOGOUT DESDE LOGIN');
+        //console.log('PRESIONO LOGOUT DESDE LOGIN');
         //logout() validates the user and if there is user then proceeds to logout
         let logoutResult = await logout('/main');
         if (logoutResult.data == 'deleted') {
@@ -81,7 +87,7 @@ class MainContainer extends Component {
         let moduleIcon = '';
         let modulo = '';
         switch (this.state.contentState) {
-            case 'home': {
+            case 'inicio': {
                 const Home = dynamic(import('../../components/index/containers/index'));
                 moduleIcon = 'glyphicon-home';
                 modulo = <Home modules={modules} changeContent={this.changeContent} />;
@@ -91,14 +97,24 @@ class MainContainer extends Component {
                 moduleIcon = 'glyphicon-blackboard';
                 modulo = <Dashboard />;
             } break;
-            case 'inventory': {
+            case 'inventario': {
+                const Inventory = dynamic(import('../../components/inventory/containers/inventory'));
+                moduleIcon = 'glyphicon-book';
+                modulo = <Inventory />;
+            } break;
+            case 'busqueda': {
+                const Inventory = dynamic(import('../../components/inventory/containers/inventory'));
+                moduleIcon = 'glyphicon-book';
+                modulo = <Inventory />;
+            } break;
+            case 'creacion': {
                 const Inventory = dynamic(import('../../components/inventory/containers/inventory'));
                 moduleIcon = 'glyphicon-book';
                 modulo = <Inventory />;
             } break;
             case 'profile': {
                 //const Profile = dynamic(import('../../components/profile/containers/profile'));
-                const Profile = dynamic(import('../../components/profile/components/profile2'));
+                const Profile = dynamic(import('../../components/profile/containers/profile'));
                 moduleIcon = 'glyphicon-user';
                 modulo = <Profile user_info={user_info} />;
             } break;
@@ -115,6 +131,7 @@ class MainContainer extends Component {
                     .spinner{
                         margin-top: 5px;
                         margin-bottom: 5px;
+                        margin-left: 5px;
                         position: fixed;
                         bottom: 0;
                     }
@@ -142,6 +159,7 @@ class MainContainer extends Component {
                         menuItem={this.dropDownMenuItem}
                         icon={moduleIcon}
                         moduleTitle={moduleTitle}
+                        moduleSubTitle={this.state.moduleSubTitle}
                     />
                     {(this.props.showSpinner) ? spinner : modulo}
                 </ModuleLayout>

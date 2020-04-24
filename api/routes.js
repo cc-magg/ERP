@@ -29,6 +29,20 @@ routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth
   })
 })
 
+routes.post('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (req, res, next) => {
+  if (!req.user) return next(boom.unauthorized()) 
+
+  const { name, email } = req.user
+  const user = {
+    name,
+    email
+  }
+  return res.status(200).json({
+    data: user,
+    message: 'user information'
+  })
+})
+
 routes.post('/getallproducts', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
   if (!services) {
     try {

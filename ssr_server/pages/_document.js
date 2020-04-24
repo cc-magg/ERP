@@ -29,8 +29,6 @@ class MyDocument extends Document {
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossOrigin="anonymous"></script>*/}
 
           <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet"></link>
-          <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-
         </Head>
         <body>
           <Main />

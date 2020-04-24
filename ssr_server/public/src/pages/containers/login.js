@@ -44,7 +44,7 @@ class Login extends Component {
             //console.log('---> desde client COMPONENTDIDUPDATE se detecto un nuevo token y se mandara a validar al server', this.state.token);
             const tokenValidation = await checkInCookieForUsers();
             if (tokenValidation.data == 'logued') {
-                console.log('---> desde client COMPONENTDIDUPDATE', tokenValidation.data);
+                //console.log('---> desde client COMPONENTDIDUPDATE', tokenValidation.data);
                 if (!this.state.isLogued) this.setState({ isLogued: true });
                 //the window eventlistener in /pages/login.js will redirect to /main ALL /login pages
                 window.localStorage.setItem("login", Date.now());
@@ -72,14 +72,11 @@ class Login extends Component {
         return Object.keys(newState).length ? newState : null;
     }
     render() {
+        //if in some case the card is not needed then change this showCard var
+        const showCard = true;
         return (<HandleErrorContainer>
-            <Layout>
-                {(this.state.showSpinner) ? <div className="spinner">
-                    <RingLoader loading={this.state.showSpinner} color='#000000' /></div> :
-                    <LoginComponent
-                        isLogued={this.state.isLogued}
-                        logout={this.handleLogout}
-                    />}
+            <Layout showCard={showCard} loading={this.state.showSpinner}>
+                {(this.state.showSpinner) ? <RingLoader loading={this.state.showSpinner} color={'gray'} /> : <LoginComponent isLogued={this.state.isLogued} logout={this.handleLogout} />}
             </Layout>
         </HandleErrorContainer>)
     }

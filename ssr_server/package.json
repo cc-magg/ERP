@@ -4,9 +4,9 @@
   "description": "ERP V-1 web",
   "main": "server2.js",
   "scripts": {
-    "start-dev": "SET DEBUG=erp:* && nodemon server3.js",
+    "dev": "SET DEBUG=erp:* && node server3.js",
     "lint": "standard",
-    "dev": "next -p 8000",
+    "start-dev": "next -p 8000",
     "build-next": "next build",
     "start-next": "next start -p 9000"
   },
@@ -19,17 +19,13 @@
     }
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.27",
-    "@fortawesome/free-brands-svg-icons": "^5.12.1",
-    "@fortawesome/free-regular-svg-icons": "^5.12.1",
-    "@fortawesome/free-solid-svg-icons": "^5.12.1",
-    "@fortawesome/react-fontawesome": "^0.1.9",
     "@hapi/boom": "^9.0.0",
     "@zeit/next-css": "^1.0.1",
     "axios": "^0.19.2",
     "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.4.1",
+    "bootstrap-icons": "^1.0.0-alpha3",
     "chalk": "^3.0.0",
     "chart.js": "^2.7.2",
     "debug": "^3.1.0",

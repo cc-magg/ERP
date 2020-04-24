@@ -1,29 +1,25 @@
 import React from 'react';
+import Link from 'next/link';
 
 const Menu = props => {
     return (<div>
         <nav className="navbar navbar-default" role="navigation">
             <div className="container-fluid">
                 <div className="navbar-header">
-                    <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbara">
-                        <span className="sr-only">Toggle navigation</span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                    </button>
                     <a className="navbar-brand" href="#">ERP-gemelos</a>
                 </div>
 
-                <div className="navbara collapse navbar-collapse">
-                    <ul className="nav navbar-nav navbar-right">
-                        <li className="active"><a href="/">Home</a></li>
-                        {(props.access == true) ? <li><a href="/main">main</a></li> : <li><a href="/login">login</a></li>}
-                        {(props.access == true) && <li><a className="hover" onClick={props.logout}>logout</a></li>}
-                    </ul>
+                <div className="dropdown">
+                    <button className="btn customWidthDropdown btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Acceder</button>
+                    <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                        <Link href="/"><a className="dropdown-item active"  name="inicio">Inicio</a></Link>
+                        {(props.access == true)&& <Link href="/main"><a className="dropdown-item"  name="main">Dashboard</a></Link>}
+                        {(props.access == true)? <Link href="#"><a className="dropdown-item"  onClick={props.logout} name="logout">Log out</a></Link> : <Link href="/login"><a className="dropdown-item"  name="login">log In</a></Link>}
+                    </div>
                 </div>
             </div>
         </nav>
-        <style jsx global>{
+        <style jsx>{
             `.navbar {
                 margin-bottom: 0 !important;
             }
