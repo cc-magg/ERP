@@ -7,7 +7,13 @@ module.exports = function setupProductModel (config) {
   const sequelize = setupDatabase(config)// verificamos que este la conexion a la bd y si no lo esta la crea
 
   // Ahora creamos la tabla 'products' junto con sus columnas con Sequelize
-  return sequelize.define('products', {
+  return sequelize.define('product', {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      allowNull: false,
+      primaryKey: true
+    },
     Barcode: {
       type: Sequelize.INTEGER,
       allowNull: false
@@ -15,7 +21,7 @@ module.exports = function setupProductModel (config) {
     Name: {
       type: Sequelize.STRING,
       allowNull: false,
-      primaryKey: true
+      unique: true
     },
     Description: {
       type: Sequelize.STRING,
@@ -33,8 +39,12 @@ module.exports = function setupProductModel (config) {
       type: Sequelize.STRING,
       allowNull: false
     },
-    Branch_office: {
-      type: Sequelize.STRING,
+    Price_cost: {
+      type: Sequelize.INTEGER,
+      allowNull: false
+    },
+    Percentage_profit: {
+      type: Sequelize.FLOAT,
       allowNull: false
     }
   })
