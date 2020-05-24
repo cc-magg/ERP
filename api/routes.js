@@ -5,6 +5,7 @@ const validationHandler = require('./src/utils/middleware/validationHandler')
 const { exampleUserSchema } = require('./src/joiSchemas/users')
 const userservices = require('./src/utils/services/users')
 const chalk = require('chalk')
+const Boom = require('@hapi/boom')
 const debug = require('debug')('ERP:api:routes')
 const { configDb } = require('./config')
 
@@ -29,18 +30,29 @@ routes.get('/vistaprivada', protectRoutes, scopesValidationHandler(['signin:auth
   })
 })
 
-routes.post('/getallproducts', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
-  if (!services) {
+routes.post('/getallproductsbyoffice', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  const { office, orderedBy } = req.body // = "<column>,<ASC||DESC>"
+  if (!office) { // si no lo quiere ordenado
+    debug(`${chalk.red('Error: Missing a office in the req.body')}`)
+    return next(Boom.badRequest('Missing a office in the req.body'))
+  }
+
+  if (!services || !productServices) {
     try {
       debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+      const table_name = office+'ProductsServices'
       services = await setupSequelizeDB(configDb).catch(handleFatalError)
-      productServices = services.productServices
+      console.log(JSON.stringify(services)+' '+typeof services)
+      productServices = services[table_name] // es como decir: productServices = services.Sede1ProductsServices
+      if (!services[table_name]) {
+        debug(`${chalk.red('Error: This table doesnt exist or atleast the services')} ${table_name} ${chalk.red('doesnt exist.')}`)
+        return next(Boom.badRequest('The office '+office+' doesnt exist.'))
+      }
     } catch (err) {
       return next(err)
     }
   }
 
-  const { orderedBy } = req.body // = "<column>,<ASC||DESC>"
   try {
     if (!orderedBy) { // si no lo quiere ordenado
       debug(`${chalk.green('Starting the request to db of products')}`)

@@ -14,12 +14,12 @@ module.exports = {
   },
   newOfficelocations: [
     {
-      Name: 'sede1',
+      Name: 'Sede1',
       Address: 'direccion sede 1',
       PhoneNumber: 1234567
     },
     {
-      Name: 'sede2',
+      Name: 'Sede2',
       Address: 'direccion sede 2',
       PhoneNumber: 2345678
     }
