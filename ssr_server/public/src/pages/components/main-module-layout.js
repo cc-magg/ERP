@@ -1,17 +1,18 @@
 import React from 'react';
 
-import { main, sidebar } from '../css/main';
+import { main } from '../css/main';
 
 function ModuleLayout(props) {
     return(
         <section style={props.marginLeft} className="main">
             {props.children}
             
-            <style jsx>{sidebar}</style>
-            <style jsx global>{`
+            <style jsx>{main}</style>
+            <style jsx>{`
                 .main {
                     transition: margin-left .5s;
                     /*padding: 16px;*/
+                    padding-bottom: 20px;
                 }
                 @media (max-width: 584px) {
                     .main {

@@ -51,7 +51,7 @@ class HomePage extends Component {
         window.localStorage.removeItem('logout');
     }
     render() {
-        return (<Home />)
+        return (<Home/>)
     }
 }
 function mapStateToProps(state, props) {

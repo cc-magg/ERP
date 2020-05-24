@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Map as map } from 'immutable';
 
-import ProfileComponent from '../components/profile';
+import ProfileComponent from '../components/profile3';
 
 class ProfileContainer extends Component {
     render() {

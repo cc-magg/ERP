@@ -5,7 +5,7 @@ import Router from 'next/router';
 import { Map as map } from 'immutable';
 import { bindActionCreators } from "redux";
 import * as actions from '../public/src/actions/index';
-import { auth } from '../utils/auth';
+import { checkInCookieForUsers } from '../utils/auth';
 import axios from 'axios';
 
 //import components
@@ -29,6 +29,7 @@ class Main extends Component {
         //Add event listener when a restricted Page Component mounts
         window.addEventListener('storage', event => {
             if (event.key === 'logout') {
+                this.props.actions.saveUserAccess('');
                 Router.push('/login');
             }
         });
@@ -47,6 +48,7 @@ class Main extends Component {
         //the second parameter must be the same as the window.addEventListener second parameter for it to work
         window.removeEventListener('storage', event => {
             if (event.key === 'logout') {
+                this.props.actions.saveUserAccess('');
                 Router.push('/login');
             }
         });

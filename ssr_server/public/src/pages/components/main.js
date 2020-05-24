@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 
 import { Alert } from 'react-bootstrap';
 
-import { main, sidebar } from '../css/main';
+import { main } from '../css/main';
 
 const MainComponent = props => {
     let temporalClass = (props.showSidebar) ? 'open' : '';
@@ -41,11 +41,10 @@ const MainComponent = props => {
 
             <div className="pageIndicator">
                 <span className={"icon glyphicon " + props.icon} aria-hidden="true"></span>
-                <span className="pageIndicatorText">{props.moduleTitle}</span>
+                <span className="pageIndicatorText">{props.moduleTitle+props.moduleSubTitle}</span>
             </div>
 
             <style jsx>{main}</style>
-            <style jsx>{sidebar}</style>
             <style jsx global>{`
                 .searchInput {
                     border-top: none;

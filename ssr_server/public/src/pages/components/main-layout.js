@@ -8,12 +8,12 @@ function MainLayout(props) {
                 body {
                     margin: 0;
                     font-family:"Calibri (Body)" !important;
+                    background-color: #ececec;
                     /*overflow-y: hidden;*/
                 }`
             }</style>
             <style jsx>{`
                 .mainLayer {
-                    background-color: #ececec;
                     height: 100vh;
                 }
                 @media (max-width: 584px) {

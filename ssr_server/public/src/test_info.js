@@ -16,7 +16,20 @@ export const modules =  [
             "color": '#adcd83'
         },
         "4": {
-            "title": 'Otro',
+            "title": 'Productos',
+            "image": 'src',
+            "color": '#cd83c0',
+            "submodulos": [
+                {
+                    "title": "busqueda"
+                },
+                {
+                    "title": "creacion"
+                }
+            ]
+        },
+        "5": {
+            "title": 'otros',
             "image": 'src',
             "color": '#cd83c0'
         }
@@ -44,4 +57,37 @@ export const user_info = [
             "sessions": "1" 
         }
     }
+];
+
+export const inventary = [
+    {
+        "id": 1,
+        "nombre": "dolex",
+        "cantidad": 34,
+        "descripcion": "Cada tableta recubierta contiene: 500 mg de acetaminofén.",
+        "marca": "tableta",
+        "precio unitario": 1200,
+        "proveedor": "copi",
+        "existencias minimas": 10, 
+    },
+    {
+        "id": 2,
+        "nombre": "advil",
+        "cantidad": 10,
+        "descripcion": "Cada tableta recubierta contiene: 500 mg de acetaminofén.",
+        "marca": "tableta",
+        "precio unitario": 200,
+        "proveedor": "copi",
+        "existencias minimas": 10, 
+    },
+    {
+        "id": 3,
+        "nombre": "acetaminofem",
+        "cantidad": 20,
+        "descripcion": "Cada tableta recubierta contiene: 500 mg de acetaminofén.",
+        "marca": "tableta",
+        "precio unitario": 800,
+        "proveedor": "copi",
+        "existencias minimas": 10, 
+    },
 ];

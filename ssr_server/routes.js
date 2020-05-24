@@ -117,7 +117,7 @@ routes.use('/main', userAlreadyAuth, (req, res, next) => {
 //called to validate the user before redirecting it to a private view from the client
 routes.get('/checkToken', checkUserForLogIn, async (req, res, next) => {
   //esta unicamente va a retornar si ya esta logueado o no
-  //console.log('CHECKTOKEN SALIO DEL MIDDLEWARE')
+  //console.log('CHECKTOKEN SALIO DEL MIDDLEWARE', req.session.jwtoken)
   if (!req.session.jwtoken || req.session.jwtoken == undefined) {
     res.send('notLogued')
   } else res.send('logued')
