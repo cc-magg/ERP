@@ -15,6 +15,7 @@ import MainLayout from '../components/main-layout';
 import ModuleLayout from '../components/main-module-layout';
 import MainComponent from '../components/main';
 import MenuComponent from '../components/menu';
+import { ModalLocation } from '../../components/modal/modalTypes';
 
 //temporal modules test info
 import { modules, user, user_info } from '../../test_info';
@@ -28,15 +29,21 @@ class MainContainer extends Component {
         moduleSubTitle: '',
         location: 'default'
     }
+    setLocation = location => {
+        //this location should be saved into the user session database (remember a user can have multiple sessions)
+        this.setState({ location: location });
+    }
+    openModalToSelectLocation = () => {
+        $('#selectLocation').modal('show');
+    }
     openCloseSidebar = () => {
         this.setState({ showSidebar: !this.state.showSidebar });
     }
     changeContent = content => {
-        const subtitle = (content == 'inventario')? ' - SUCURSAL '+this.state.location.toUpperCase() : '';
-        this.setState({ 
-            contentState: content,
-            moduleSubTitle: subtitle
-        });
+        let update = {};
+        update.contentState = content;
+        //if (content == 'inventario') update.moduleSubTitle = ' - SUCURSAL ' + this.state.location.toUpperCase();
+        this.setState(update);
     }
     handleSubmitSearch = event => {
         event.preventDefault();
@@ -75,8 +82,9 @@ class MainContainer extends Component {
                 this.changeContent(eventKey);
                 break;
             }
-            case 'another': {
+            case 'location': {
                 console.log('presiono la opcion ' + eventKey);
+                this.openModalToSelectLocation();
                 break;
             }
             default: break;
@@ -84,6 +92,7 @@ class MainContainer extends Component {
     }
     render() {
         let moduleTitle = this.state.contentState.toUpperCase();
+        let moduleSubTitle = (this.state.contentState == "inventario")? ' - SUCURSAL ' + this.state.location.toUpperCase() : this.state.moduleSubTitle;
         let moduleIcon = '';
         let modulo = '';
         switch (this.state.contentState) {
@@ -102,18 +111,17 @@ class MainContainer extends Component {
                 moduleIcon = 'glyphicon-book';
                 modulo = <Inventory />;
             } break;
-            case 'busqueda': {
-                const Inventory = dynamic(import('../../components/inventory/containers/inventory'));
+            case 'productos': {
+                const Product = dynamic(import('../../components/products/containers/product'));
                 moduleIcon = 'glyphicon-book';
-                modulo = <Inventory />;
+                modulo = <Product />;
             } break;
-            case 'creacion': {
-                const Inventory = dynamic(import('../../components/inventory/containers/inventory'));
+            case 'subir pedido': {
+                const LoadOrder = dynamic(import('../../components/movements/loadOrder/containers/index'));
                 moduleIcon = 'glyphicon-book';
-                modulo = <Inventory />;
+                modulo = <LoadOrder />;
             } break;
             case 'profile': {
-                //const Profile = dynamic(import('../../components/profile/containers/profile'));
                 const Profile = dynamic(import('../../components/profile/containers/profile'));
                 moduleIcon = 'glyphicon-user';
                 modulo = <Profile user_info={user_info} />;
@@ -142,6 +150,7 @@ class MainContainer extends Component {
         let width = (this.state.showSidebar) ? { width: 250 } : { width: 0 };
         let marginLeft = (this.state.showSidebar) ? { marginLeft: 250 } : { marginLeft: 0 };
         return <HandleErrorContainer>
+            <ModalLocation setLocation={this.setLocation} />
             <MainLayout>
                 <MenuComponent
                     width={width}
@@ -159,7 +168,8 @@ class MainContainer extends Component {
                         menuItem={this.dropDownMenuItem}
                         icon={moduleIcon}
                         moduleTitle={moduleTitle}
-                        moduleSubTitle={this.state.moduleSubTitle}
+                        moduleSubTitle={moduleSubTitle}
+                        location={this.state.location}
                     />
                     {(this.props.showSpinner) ? spinner : modulo}
                 </ModuleLayout>

@@ -1,6 +1,6 @@
 import React from 'react';
 import InventaryTable from './inventaryTable';
-import Modal from '../../modal-layout';
+import Modal from '../../modal/modalLayout';
 
 const InventoryComponent = props => {
     const _handleKeyDownSearch = e => {

@@ -31,8 +31,8 @@ const MainComponent = props => {
                     <div className="dropdown">
                         <button className="btn customWidthDropdown btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
                         <div className="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a className="dropdown-item" href="#" name="profile" onClick={click}>Profile</a>
-                            <a className="dropdown-item" href="#" name="another" onClick={click}>Separated link</a>
+                            <a className="dropdown-item" href="#" name="profile" onClick={click}>Perfil</a>
+                            <a className="dropdown-item" href="#" name="location" onClick={click}>Seleccionar sede</a>
                             <a className="dropdown-item" href="#" name="logout" onClick={click}>Log out</a>
                         </div>
                     </div>
