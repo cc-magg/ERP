@@ -5,6 +5,7 @@ const validationHandler = require('./src/utils/middleware/validationHandler')
 const { exampleUserSchema } = require('./src/joiSchemas/users')
 const userservices = require('./src/utils/services/users')
 const chalk = require('chalk')
+const Boom = require('@hapi/boom')
 const debug = require('debug')('ERP:api:routes')
 const { configDb } = require('./config')
 
@@ -14,7 +15,7 @@ const scopesValidationHandler = require('./src/utils/middleware/scopesValidation
 
 //sequelize db configuration
 const setupSequelizeDB = require('ERP-db')
-let services, productServices // Services of db postgresql sequelize
+let services, productServices, providerServices // Services of db postgresql sequelize
 
 routes.get('/', (req, res, next) => {
   // throw new Error(`error custom`)
@@ -43,18 +44,29 @@ routes.post('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (r
   })
 })
 
-routes.post('/getallproducts', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
-  if (!services) {
+routes.post('/getallproductsbyoffice', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  const { office, orderedBy } = req.body // = "<column>,<ASC||DESC>"
+  if (!office) { // si no lo quiere ordenado
+    debug(`${chalk.red('Error: Missing a office in the req.body')}`)
+    return next(Boom.badRequest('Missing a office in the req.body'))
+  }
+
+  if (!services || !productServices) {
     try {
       debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+      const table_name = office+'ProductsServices'
       services = await setupSequelizeDB(configDb).catch(handleFatalError)
-      productServices = services.Product.productServices
+      console.log(JSON.stringify(services)+' '+typeof services)
+      productServices = services[table_name] // es como decir: productServices = services.Sede1ProductsServices
+      if (!services[table_name]) {
+        debug(`${chalk.red('Error: This table doesnt exist or atleast the services')} ${table_name} ${chalk.red('doesnt exist.')}`)
+        return next(Boom.badRequest('The office '+office+' doesnt exist.'))
+      }
     } catch (err) {
       return next(err)
     }
   }
 
-  const { orderedBy } = req.body
   try {
     if (!orderedBy) { // si no lo quiere ordenado
       debug(`${chalk.green('Starting the request to db of products')}`)
@@ -66,13 +78,45 @@ routes.post('/getallproducts', protectRoutes, scopesValidationHandler(['signin:a
     }
 
     debug(`${chalk.green('Starting the request to db of products ordered by: ')} ${orderedBy}`)
-    const arrayOrderedBy = []
-    arrayOrderedBy.push(orderedBy.split(',')) // arrayOrderedBy = [["Name","DESC"]]
-    console.log(arrayOrderedBy)
-    const resoult = await productServices.findAllProducts(arrayOrderedBy) // si retorna un error va a caer en el catch
+
+    const resoult = await productServices.findAllProducts(orderedBy) // si retorna un error va a caer en el catch
     return res.status(200).json({
       data: resoult,
       message: 'products list'
+    })
+  } catch (err) {
+    return next(err)
+  }
+})
+
+routes.post('/getallproviders', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  if (!services) {
+    try {
+      debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+      services = await setupSequelizeDB(configDb).catch(handleFatalError)
+      providerServices = services.providerServices
+    } catch (err) {
+      return next(err)
+    }
+  }
+
+  const { orderedBy } = req.body // = "<column>,<ASC||DESC>"
+  try {
+    if (!orderedBy) { // si no lo quiere ordenado
+      debug(`${chalk.green('Starting the request to db of providers')}`)
+      const resoult = await providerServices.findAllProviders() // si retorna un error va a caer en el catch
+      return res.status(200).json({
+        data: resoult,
+        message: 'products list'
+      })
+    }
+
+    debug(`${chalk.green('Starting the request to db of providers ordered by: ')} ${orderedBy}`)
+
+    const resoult = await providerServices.findAllProviders(orderedBy) // si retorna un error va a caer en el catch
+    return res.status(200).json({
+      data: resoult,
+      message: 'providers list'
     })
   } catch (err) {
     return next(err)

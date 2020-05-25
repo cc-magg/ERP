@@ -35,8 +35,9 @@ function errorHandler (err, req, res, next) {
       console.log('error 401')
       return res.status(401).json(withErrorStack(err.message, err.stack))
     } else {
-      console.log('error 500')
-      return res.status(500).json(withErrorStack(err.message, err.stack))
+      /*console.log('error 500')
+      return res.status(500).json(withErrorStack(err.message, err.stack))*/
+      return res.status(err.output.payload.statusCode).json(err.output.payload)
     }
   } else {
     return res.status(err.statusCode).json(err)

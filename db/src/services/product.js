@@ -3,9 +3,13 @@
 const database = require('../lib/postgresql')
 const chalk = require('chalk')
 
-module.exports = function productsServices (ProductModel, ProviderModel) {
-  async function findAllProducts (order) {
-    if (order) return database.findAll(ProductModel, order)
+module.exports = function productsServices (ProductModel) {
+  async function findAllProducts (orderedBy) {
+    if (orderedBy) {
+      const arrayOrderedBy = []
+      arrayOrderedBy.push(orderedBy.split(',')) // arrayOrderedBy = [["Name","DESC"]]
+      return database.findAll(ProductModel, { order: arrayOrderedBy }) // options = { order: [["Name","DESC"]] }
+    }
     return database.findAll(ProductModel)
   }
 
@@ -21,24 +25,13 @@ module.exports = function productsServices (ProductModel, ProviderModel) {
   async function createOrUpdateProduct (productToCreateOrUpdate, providerName) {
     const condition = {
       where: {
-        Barcode: productToCreateOrUpdate.Barcode
+        Name: productToCreateOrUpdate.Name
       }
     }
 
     const product = await database.find(ProductModel, condition)
     if (!product) { // si no encuentra al producto, lo crea
         
-      // buscamos el proveedor para verificar que exista y proceder a asignarlo al nuevo producto a crear y crearlo
-      const provider = await database.find(ProviderModel, {
-        where: {
-          Name: providerName
-        }
-      })
-      if (!provider) {
-        return new Error(`The provider with the Name: ${providerName} doesn't exist, please create it and then proceed to create this product again.`)
-      }
-      Object.assign(productToCreateOrUpdate, { last_provider: provider.Name }) // si el proveedor existe, al objeto producto le agrega el Name del proveedor en providerId
-      
       const newProduct = await database.create(ProductModel, productToCreateOrUpdate)
       if (newProduct.Name) {
         console.log(`${chalk.green('New product created: ')}${newProduct.Name}`)

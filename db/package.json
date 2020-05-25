@@ -7,26 +7,31 @@
     "lint": "standard",
     "setup": "node ./setup.js",
     "setup-y": "node ./setup.js -y",
+    "seed-officelocation": "node ./src/scripts/sequelize/officelocation.js",
+    "seed-officelocation-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/officelocation.js",
     "seed-provider": "node ./src/scripts/sequelize/provider.js",
     "seed-provider-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/provider.js",
-    "seed-products": " node ./src/scripts/sequelize/products.js",
-    "seed-products-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/products.js",
-    "seed-all": "node ./src/scripts/sequelize/provider.js -y",
-    "seed-all-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/provider.js -y"
+    "seed-order": "node ./src/scripts/sequelize/order.js",
+    "seed-order-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/order.js",
+    "seed-product": " node ./src/scripts/sequelize/product.js",
+    "seed-product-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/product.js",
+    "seed-all": "node ./src/scripts/sequelize/officelocation.js -y",
+    "seed-all-debug": "set DEBUG=ERP:db:* & node ./src/scripts/sequelize/officelocation.js -y"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^3.0.0",
+    "@hapi/boom": "^9.1.0",
+    "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "inquirer": "^7.1.0",
-    "pg": "^7.18.2",
+    "pg": "^8.2.1",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^5.21.5"
+    "sequelize": "^5.21.10"
   },
   "devDependencies": {
     "longjohn": "^0.2.12",
-    "standard": "^14.3.1"
+    "standard": "^14.3.4"
   }
 }

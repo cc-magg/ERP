@@ -3,7 +3,12 @@
 const database = require('../lib/postgresql')
 
 module.exports = function providerServices (ProviderModel) {
-  async function findAllProviders () {
+  async function findAllProviders (orderedBy) {
+    if (orderedBy) {
+      const arrayOrderedBy = []
+      arrayOrderedBy.push(orderedBy.split(',')) // arrayOrderedBy = [["Name","DESC"]]
+      return database.findAll(ProviderModel, { order: arrayOrderedBy }) // options = { order: [["Name","DESC"]] }
+    }
     return database.findAll(ProviderModel)
   }
 
