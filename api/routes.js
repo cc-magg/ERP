@@ -8,6 +8,7 @@ const chalk = require('chalk')
 const Boom = require('@hapi/boom')
 const debug = require('debug')('ERP:api:routes')
 const { configDb } = require('./config')
+const dateFormat = require('dateformat')
 
 // routes protection
 const protectRoutes = require('./src/utils/auth/customCallbacks/jwtHandler')
@@ -15,7 +16,7 @@ const scopesValidationHandler = require('./src/utils/middleware/scopesValidation
 
 //sequelize db configuration
 const setupSequelizeDB = require('ERP-db')
-let services, productServices, providerServices // Services of db postgresql sequelize
+let services, providerServices // Services of db postgresql sequelize
 
 routes.get('/', (req, res, next) => {
   // throw new Error(`error custom`)
@@ -44,42 +45,80 @@ routes.post('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (r
   })
 })
 
+routes.post('/createproductsbackup', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  const { office } = req.body
+  if (!office) {
+    debug(`${chalk.red('Error: Missing a office in the req.body')}`)
+    return next(Boom.badRequest('Missing a office in the req.body'))
+  }
+
+  let productServices = null
+  try {
+    debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+    const table_name = office+'ProductsServices'
+    services = await setupSequelizeDB(configDb).catch(handleFatalError)
+    console.log(JSON.stringify(services)+' '+typeof services)
+    productServices = services[table_name] // es como decir: productServices = services.Sede1ProductsServices
+    if (!services[table_name]) {
+      debug(`${chalk.red('Error: This table doesnt exist or atleast the services')} ${table_name} ${chalk.red('doesnt exist.')}`)
+      return next(Boom.badRequest('The office '+office+' doesnt exist.'))
+    }
+  } catch (err) {
+    return next(err)
+  }
+
+  try {
+    debug(`${chalk.green('Starting the request to db of products')}`)
+    const backupDate = dateFormat(new Date(), "yyyy_mm_dd_HH_MM_ss_l")
+    const newBackupModel = await productServices.createProductsBackup(office+'Products', backupDate) // si retorna un error va a caer en el catch
+    if (!newBackupModel) {
+      debug(`${chalk.red('Error: there was a problem when trying to create the backup of the products table of the office')} ${office}`)
+      return next(Boom.badImplementation('there was a problem when trying to create the backup of the products table'))
+    }
+
+    await productServices.tableReset(office+'Products')
+
+    return res.status(200).json({
+      data: {},
+      message: `Products backup created and ${office+'Products'} reseted`
+    })
+
+  } catch (err) {
+    return next(err)
+  }
+})
+
 routes.post('/getallproductsbyoffice', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
-  const { office, orderedBy } = req.body // = "<column>,<ASC||DESC>"
+  const { office, orderedBy, provider, productPosition } = req.body // orderedBy = "<column>,<ASC||DESC>"
   if (!office) { // si no lo quiere ordenado
     debug(`${chalk.red('Error: Missing a office in the req.body')}`)
     return next(Boom.badRequest('Missing a office in the req.body'))
   }
 
-  if (!services || !productServices) {
-    try {
-      debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
-      const table_name = office+'ProductsServices'
-      services = await setupSequelizeDB(configDb).catch(handleFatalError)
-      console.log(JSON.stringify(services)+' '+typeof services)
-      productServices = services[table_name] // es como decir: productServices = services.Sede1ProductsServices
-      if (!services[table_name]) {
-        debug(`${chalk.red('Error: This table doesnt exist or atleast the services')} ${table_name} ${chalk.red('doesnt exist.')}`)
-        return next(Boom.badRequest('The office '+office+' doesnt exist.'))
-      }
-    } catch (err) {
-      return next(err)
+  let productServices = null
+  try {
+    debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+    const table_name = office+'ProductsServices'
+    services = await setupSequelizeDB(configDb).catch(handleFatalError)
+    // console.log(JSON.stringify(services)+' '+typeof services)
+    if (!services[table_name]) {
+      debug(`${chalk.red('Error: This table doesnt exist or atleast the services')} ${table_name} ${chalk.red('doesnt exist.')}`)
+      return next(Boom.badRequest('The office '+office+' doesnt exist.'))
     }
+    productServices = services[table_name] // es como decir: productServices = services.Sede1ProductsServices
+  } catch (err) {
+    return next(err)
+  }
+  
+
+  const requestFilterOptions = {
+    orderedBy,
+    provider,
+    productPosition
   }
 
   try {
-    if (!orderedBy) { // si no lo quiere ordenado
-      debug(`${chalk.green('Starting the request to db of products')}`)
-      const resoult = await productServices.findAllProducts() // si retorna un error va a caer en el catch
-      return res.status(200).json({
-        data: resoult,
-        message: 'products list'
-      })
-    }
-
-    debug(`${chalk.green('Starting the request to db of products ordered by: ')} ${orderedBy}`)
-
-    const resoult = await productServices.findAllProducts(orderedBy) // si retorna un error va a caer en el catch
+    const resoult = await productServices.findAllProducts(requestFilterOptions) // si retorna un error va a caer en el catch
     return res.status(200).json({
       data: resoult,
       message: 'products list'

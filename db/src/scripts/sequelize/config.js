@@ -51,6 +51,7 @@ module.exports = {
     {
       Barcode: 123456789,
       Name: 'xxx',
+      Position: 'E14',
       Description: 'descripcion xxxxx',
       Unit_price: 10,
       Stock: 2,
@@ -61,6 +62,7 @@ module.exports = {
      {
       Barcode: 123456789,
       Name: 'xxy',
+      Position: 'E14',
       Description: 'descripcion xxxxx',
       Unit_price: 10,
       Stock: 2,
@@ -71,6 +73,7 @@ module.exports = {
      {
       Barcode: 123456789,
       Name: 'xyy',
+      Position: 'E10',
       Description: 'descripcion xxxxx',
       Unit_price: 10,
       Stock: 2,
@@ -81,6 +84,7 @@ module.exports = {
      {
       Barcode: 123456789,
       Name: 'yyy',
+      Position: 'V03',
       Description: 'descripcion xxxxx',
       Unit_price: 10,
       Stock: 2,
@@ -91,6 +95,7 @@ module.exports = {
      {
       Barcode: 123456789,
       Name: 'yyx',
+      Position: 'V03',
       Description: 'descripcion xxxxx',
       Unit_price: 10,
       Stock: 2,

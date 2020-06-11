@@ -55,14 +55,14 @@ async function createAllTestProducts () {
   console.log(`${chalk.bold.blue('Creating the products')}`)
   for (const productObject of products) {
     debug(`${chalk.green('Starting the creation of product:')} ${productObject.Name}`)
-    const productCreated = await createTestProduct(productObject, ProductModel, Order, sequelize)
+    const productCreated = await createTestProduct(productObject, ProductModel, Order)
     if (productCreated) console.log(JSON.stringify(productCreated))
   }
   console.log(`${chalk.bold.green('Ok all done with the creation of the products')}`)
   process.exit(0)
 }
 
-async function createTestProduct (productToCreateOrUpdate, ProductModel, Order, sequelize) {
+async function createTestProduct (productToCreateOrUpdate, ProductModel, Order) {
   try {
     const condition = {
       where: {
