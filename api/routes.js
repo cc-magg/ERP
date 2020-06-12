@@ -16,7 +16,7 @@ const scopesValidationHandler = require('./src/utils/middleware/scopesValidation
 
 //sequelize db configuration
 const setupSequelizeDB = require('ERP-db')
-let services, providerServices // Services of db postgresql sequelize
+let services, providerServices, officelocationServices // Services of db postgresql sequelize
 
 routes.get('/', (req, res, next) => {
   // throw new Error(`error custom`)
@@ -43,6 +43,40 @@ routes.post('/user', protectRoutes, scopesValidationHandler(['signin:auth']), (r
     data: user,
     message: 'user information'
   })
+})
+
+routes.post('/getalloffices', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
+  if (!services) {
+    try {
+      debug(`${chalk.green('Starting the request to db for the initilization of sequelize')}`)
+      services = await setupSequelizeDB(configDb).catch(handleFatalError)
+      officelocationServices = services.officelocationServices
+    } catch (err) {
+      return next(err)
+    }
+  }
+
+  const { orderedBy } = req.body // = "<column>,<ASC||DESC>"
+  try {
+    if (!orderedBy) { // si no lo quiere ordenado
+      debug(`${chalk.green('Starting the request to db of providers')}`)
+      const resoult = await officelocationServices.findAllOfficelocations() // si retorna un error va a caer en el catch
+      return res.status(200).json({
+        data: resoult,
+        message: 'office list'
+      })
+    }
+
+    debug(`${chalk.green('Starting the request to db of officelocation ordered by: ')} ${orderedBy}`)
+
+    const resoult = await officelocationServices.findAllOfficelocations() // si retorna un error va a caer en el catch
+    return res.status(200).json({
+      data: resoult,
+      message: 'office list'
+    })
+  } catch (err) {
+    return next(err)
+  }
 })
 
 routes.post('/createproductsbackup', protectRoutes, scopesValidationHandler(['signin:auth']), async (req, res, next) => {
