@@ -18,6 +18,10 @@ module.exports = {
     allowNull: false,
     unique: true
   },
+  Position: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
   Description: {
     type: Sequelize.STRING,
     allowNull: false

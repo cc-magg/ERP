@@ -109,7 +109,7 @@ module.exports = async function (config) {
   tables.forEach(async function (element) {
     
     const table_name = element.table_name
-    if (table_name.match(/Products/) && table_name.match(/^(?!$)(?!.*(order|Order))/)) { // busco que el nombre de la tabla: contenga 'Products' y no contenga ni 'order' ni 'Order'
+    if (table_name.match(/Products/) && table_name.match(/^(?!$)(?!.*(order|Order|backup|Backup))/)) { // busco que el nombre de la tabla: contenga 'Products' y no contenga ni 'order' ni 'Order' ni 'backup' ni 'Backup'
       debug(`find a table of products that was created dinamically: ${chalk.green(table_name)}`)
       const officeName = table_name.substring(0, (table_name.length-8))
 
@@ -136,7 +136,7 @@ module.exports = async function (config) {
           OrderProductsModel.belongsTo(ProductModel, { foreignKey: 'Product_id' })
 
           const serviceName = table_name+'Services'
-          allServices[serviceName] = productServices(ProductModel)
+          allServices[serviceName] = productServices(ProductModel, OrderModel, OfficeProvidersModel, ProviderModel)
           console.log('Dinamyc service created: '+serviceName)
         }
       })
