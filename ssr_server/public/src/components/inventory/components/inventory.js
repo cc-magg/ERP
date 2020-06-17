@@ -1,6 +1,7 @@
 import React from 'react';
 import InventaryTable from './inventaryTable';
 import Modal from '../../modal/modalLayout';
+import LocationDropdownButton from '../../buttons/locationDropdown';
 
 const InventoryComponent = props => {
     const _handleKeyDownSearch = e => {
@@ -9,18 +10,14 @@ const InventoryComponent = props => {
             props.searchHandler(e.target.value);
         }
     };
+    const handleLocationChange = item => {
+        props.updateLocation(item);
+    }
     return <div className="mainContainer">
         <div className="container-fluid">
             <div className="row">
                 <div className="my-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl">
-                    <div className="dropdown">
-                        <button className="btn btn-dark dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SUCURSAL</button>
-                        <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a className="dropdown-item" href="#">Action</a>
-                            <a className="dropdown-item" href="#">Another action</a>
-                            <a className="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </div>
+                    <LocationDropdownButton id="locationInventory" title="sucursal" updateLocation={handleLocationChange}/>
                 </div>
                 <div className="my-1 col-12 col-sm-6 col-md-6 col-lg-4 col-xl">
                     <button type="button" className="btn btn-dark btn-block">REALIZAR PEDIDO</button>
@@ -57,7 +54,7 @@ const InventoryComponent = props => {
             </div>
             <div className="row tableContainer">
                 <div className="col">
-                    <InventaryTable />
+                    <InventaryTable inventory={props.inventory}/>
                 </div>
             </div>
             <div className="row text-right">

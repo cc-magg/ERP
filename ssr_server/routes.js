@@ -67,7 +67,7 @@ const userAlreadyAuth = async (req, res, next) => {
   //console.log('JWTOKEN ' + req.session.jwtoken)
   if (!req.session.jwtoken || req.session.jwtoken == undefined) {
     //user is not logued because there is not jwtoken in the cookie
-    //console.log('VA PARA LOGIN')
+    console.log('VA PARA LOGIN')
     res.redirect('/login')
   } else {
     //there is a jwtoken so it's validated to check if it's still valid or if it has expired
@@ -145,6 +145,68 @@ routes.get('/logout', userAlreadyAuth, (req, res, next) => {
       res.send('deleted')
     }
   })
+})
+
+const userAlreadyAuthFrontEnd = async (req, res, next) => {
+  if (!req.session.jwtoken || req.session.jwtoken == undefined) {
+    //user is not logued because there is not jwtoken in the cookie
+    //console.log('VA PARA LOGIN')
+    res.send('notLogued')
+  } else {
+    //there is a jwtoken so it's validated to check if it's still valid or if it has expired
+    //console.log('MIDDLEWARE ANTES DE VALIDAR EL JWTOKEN')
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'http://localhost:3000/api/user',
+        headers: { 'Authorization': `Bearer ${req.session.jwtoken}` }
+      })
+      //console.log('LA RESPUESTA ES: ' + response.data.data.name)
+    } catch (error) {
+      //the token validation response is error that means the token has expired so here me have to get a new token
+      //console.log('Request failed¡¡ error: ' + error)
+      try {
+        const response = await axios({
+          method: 'post',
+          url: 'http://localhost:3000/api/getnewtoken',
+          data: {
+            apiKeyToken,
+            sessionId: req.session.sessionId
+          }
+        })
+        //console.log('GET NEW TOKEN RETORNO: ' + response.data.token)
+        req.session.jwtoken = response.data.token
+      } catch (error) {
+        //there was an error trying to get the new jsonWebToken so delete the jwt and go to login
+        //console.log('Request failed¡¡ error: ' + error)
+        req.session.destroy(err => {
+          if (err) {
+            console.log('cookie content could not be destroyed', err)
+          } else console.log('cookie content deleted')
+        })
+        res.send('notLogued')
+      }
+    }
+    next()
+  }
+}
+
+//called to get the inventory
+routes.post('/getproductsbyoffice', userAlreadyAuthFrontEnd, async (req, res, next) => {
+  //console.log('VA A BUSCAR LA INFORMACION EL INVENTARIO------------------' + req.body.office)
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `http://localhost:3000/api/getallproductsbyoffice`,
+      data: { ...req.body },
+      headers: { 'Authorization': `Bearer ${req.session.jwtoken}` }
+    })
+    //console.log('resultado '+response.data.data)
+    return res.send(response.data.data)
+  } catch (err) { // si el request a la api retorna un error...
+    //console.log('respuesta desde el catch '+err.message + ' ' + err.data + ' ' + err.response)
+    return res.send(err)
+  }
 })
 
 routes.get('/auth/google-oauth', passport.authenticate('google-oauth', {

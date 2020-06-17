@@ -27,11 +27,15 @@ class MainContainer extends Component {
         contentState: 'inicio',
         didFirstLoad: false,
         moduleSubTitle: '',
-        location: 'default'
+    }
+    componentDidMount = () => {
+        //here we need to fetch the data for the user data like userSession.location, etc.
+        //here we should call an action to get the user session location
     }
     setLocation = location => {
         //this location should be saved into the user session database (remember a user can have multiple sessions)
-        this.setState({ location: location });
+        //here we use the state for this module data and the action for others modules data like inventory
+        this.props.actions.saveSessionLocation(location);
     }
     openModalToSelectLocation = () => {
         $('#selectLocation').modal('show');
@@ -42,7 +46,6 @@ class MainContainer extends Component {
     changeContent = content => {
         let update = {};
         update.contentState = content;
-        //if (content == 'inventario') update.moduleSubTitle = ' - SUCURSAL ' + this.state.location.toUpperCase();
         this.setState(update);
     }
     handleSubmitSearch = event => {
@@ -78,12 +81,12 @@ class MainContainer extends Component {
                 break;
             }
             case 'profile': {
-                console.log('presiono la opcion ' + eventKey);
+                //console.log('presiono la opcion ' + eventKey);
                 this.changeContent(eventKey);
                 break;
             }
             case 'location': {
-                console.log('presiono la opcion ' + eventKey);
+                //console.log('presiono la opcion ' + eventKey);
                 this.openModalToSelectLocation();
                 break;
             }
@@ -92,7 +95,7 @@ class MainContainer extends Component {
     }
     render() {
         let moduleTitle = this.state.contentState.toUpperCase();
-        let moduleSubTitle = (this.state.contentState == "inventario")? ' - SUCURSAL ' + this.state.location.toUpperCase() : this.state.moduleSubTitle;
+        let moduleSubTitle = (this.state.contentState == "inventario")? ' - SUCURSAL ' + this.props.location.toUpperCase() : this.state.moduleSubTitle;
         let moduleIcon = '';
         let modulo = '';
         switch (this.state.contentState) {
@@ -150,7 +153,7 @@ class MainContainer extends Component {
         let width = (this.state.showSidebar) ? { width: 250 } : { width: 0 };
         let marginLeft = (this.state.showSidebar) ? { marginLeft: 250 } : { marginLeft: 0 };
         return <HandleErrorContainer>
-            <ModalLocation setLocation={this.setLocation} />
+            <ModalLocation setLocation={this.setLocation} location={this.props.location}/>
             <MainLayout>
                 <MenuComponent
                     width={width}
@@ -169,7 +172,7 @@ class MainContainer extends Component {
                         icon={moduleIcon}
                         moduleTitle={moduleTitle}
                         moduleSubTitle={moduleSubTitle}
-                        location={this.state.location}
+                        location={this.props.location}
                     />
                     {(this.props.showSpinner) ? spinner : modulo}
                 </ModuleLayout>
@@ -178,8 +181,11 @@ class MainContainer extends Component {
     }
 }
 const mapStateToProps = (state, props) => {
-    let showSpinner = state.get('spinner').get('showSpinner');
-    return { showSpinner }
+    let result = {};
+    result.showSpinner = state.get('spinner').get('showSpinner');
+    result.location = state.get('userSession').get('location');
+
+    return result;
 }
 
 const mapDispatchToProps = dispatch => ({ actions: bindActionCreators(actions, dispatch) });

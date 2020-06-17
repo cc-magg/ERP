@@ -150,7 +150,7 @@ export const inventary = [
 ];
 
 export const locations = [
-    "primera",
+    "Sede1",
     "segunda",
     "tercera"
 ];

@@ -87,7 +87,7 @@ export const ModalCreateProduct = props => {
 export const ModalLocation = props => {
     //can use class "active" or attribute "disabled"
     const listOfLocations = locations.map((item, index) => {
-        return <button key={index} type="button" className="list-group-item list-group-item-action" onClick={() => props.setLocation(item)}>
+        return <button key={index} type="button" className={`list-group-item list-group-item-action ${props.location == item && 'active'}`} onClick={() => props.setLocation(item)}>
             {item}
         </button>
     })

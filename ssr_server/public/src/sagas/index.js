@@ -6,18 +6,41 @@ import { login } from '../../../utils/auth';
 import {
     CALL_METRICS,
     CALL_USER_ACCESS,
-    CALL_PROFESORS
+    CALL_PROFESORS,
+    CALL_INVENTORY,
+    ERROR,
 } from '../action-types/index.js';
 import {
     setApiData,
     saveUserAccess,
     saveLoginError,
     saveProfesors,
+    saveInventory,
+    saveError,
     saveUserTokenAndDeleteOldErrors
 } from '../actions/index.js';
 
 import { apiKeyToken } from '../../../keysConfig';
 
+export function* getInventory(action) {
+    //aqui hacer un switch, en caso de que el action.payload sea X sucursal entonces la data sera...
+    const data = {
+        office: action.payload.location,
+        //office: "Sede12",
+        orderedBy: action.payload.sortBy
+    };
+    try {
+        const response = yield call(axios.post, `http://localhost:8000/getproductsbyoffice`, data);
+        if (response.data.name != undefined && response.data.name === 'Error') {
+            throw new Error('' + response.data.message);
+        } else {
+            yield put(saveInventory(response.data));
+        }
+    } catch (error) {
+        console.log('Request failed¡¡ error: ' + error.message);
+        yield put(saveError(error.message));
+    }
+}
 
 export function* getUserAccess(action) {
     const token = Buffer.from(`${action.payload.user}:${action.payload.password}`, 'utf8').toString('base64');
@@ -54,6 +77,7 @@ export function* getProfesors(action) {
 export function* actionsWatcher() {
     yield all([
         takeEvery(CALL_USER_ACCESS, getUserAccess),
+        takeEvery(CALL_INVENTORY, getInventory),
         takeEvery(CALL_PROFESORS, getProfesors)
     ])
 }

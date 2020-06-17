@@ -5,17 +5,19 @@ import {
     CREATE_BURN_AGENT,
     CALL_METRICS,*/
     CALL_USER_ACCESS,
+    CALL_INVENTORY,
+    SAVE_INVENTORY,
+    CLEAR_INVENTORY,
     SAVE_USER_ACCESS,
     REMOVE_USER_ACCESS,
+    SAVE_SESSION_LOCATION,
     SAVE_LOGIN_ERROR,
+    ERROR,
     SHOW_SPINNER_STATUS,
     CALL_PROFESORS,
     SAVE_PROFESORS,
     SAVE_NEW_USER_ACCESS
 } from '../action-types/index.js';
-
-//import { List as list } from 'immutable';
-//import axios from 'axios';
 
 //const dataTest = [{"id":2278,"type":"rss","value":"41275392","createdAt":"2018-02-28T17:35:53.316Z"},{"id":2275,"type":"rss","value":"41230336","createdAt":"2018-02-28T17:35:51.300Z"},{"id":2272,"type":"rss","value":"40923136","createdAt":"2018-02-28T17:35:49.313Z"},{"id":2269,"type":"rss","value":"40644608","createdAt":"2018-02-28T17:35:47.723Z"},{"id":2266,"type":"rss","value":"40869888","createdAt":"2018-02-19T21:59:10.480Z"},{"id":2263,"type":"rss","value":"40824832","createdAt":"2018-02-19T21:59:08.492Z"},{"id":2260,"type":"rss","value":"40783872","createdAt":"2018-02-19T21:59:06.499Z"},{"id":2257,"type":"rss","value":"40361984","createdAt":"2018-02-19T21:59:04.552Z"},{"id":2254,"type":"rss","value":"42201088","createdAt":"2018-02-19T03:57:41.620Z"},{"id":2251,"type":"rss","value":"42156032","createdAt":"2018-02-19T03:57:39.548Z"},{"id":2248,"type":"rss","value":"42115072","createdAt":"2018-02-19T03:57:37.587Z"},{"id":2245,"type":"rss","value":"42070016","createdAt":"2018-02-19T03:57:35.535Z"},{"id":2242,"type":"rss","value":"42024960","createdAt":"2018-02-19T03:57:33.547Z"},{"id":2239,"type":"rss","value":"41984000","createdAt":"2018-02-19T03:57:31.522Z"},{"id":2236,"type":"rss","value":"41938944","createdAt":"2018-02-19T03:57:29.644Z"},{"id":2233,"type":"rss","value":"41897984","createdAt":"2018-02-19T03:57:27.529Z"},{"id":2230,"type":"rss","value":"41852928","createdAt":"2018-02-19T03:57:25.515Z"},{"id":2227,"type":"rss","value":"41807872","createdAt":"2018-02-19T03:57:23.513Z"},{"id":2224,"type":"rss","value":"41771008","createdAt":"2018-02-19T03:57:21.518Z"},{"id":2221,"type":"rss","value":"41717760","createdAt":"2018-02-19T03:57:19.590Z"}];
 
@@ -42,6 +44,31 @@ export function showSpinner(status) {
         type: SHOW_SPINNER_STATUS,
         payload: {
             status
+        }
+    }
+}
+
+export function callInventory(location, sortBy) {
+    return {
+        type: CALL_INVENTORY,
+        payload: {
+            location,
+            sortBy
+        }
+    }
+}
+
+export function clearInventory() {
+    return {
+        type: CLEAR_INVENTORY
+    }
+}
+
+export function saveInventory(data) {
+    return {
+        type: SAVE_INVENTORY,
+        payload: {
+            data
         }
     }
 }
@@ -85,6 +112,24 @@ export function saveLoginError(error) {
         type: SAVE_LOGIN_ERROR,
         payload: {
             error
+        }
+    }
+}
+
+export function saveError(error) {
+    return {
+        type: ERROR,
+        payload: {
+            error
+        }
+    }
+}
+
+export function saveSessionLocation(data) {
+    return {
+        type: SAVE_SESSION_LOCATION,
+        payload: {
+            data
         }
     }
 }
